@@ -7,6 +7,8 @@ In this file we have a few functions:
     - ash
     - area2d
     - bin_fd
+    - dpdf
+    - ddpdf
 
 
 """
@@ -132,3 +134,29 @@ def bin_fd(x):
     
     iqr = np.subtract(*np.percentile(x, [75, 25]))
     return 2.0 * iqr * x.size ** (-1.0 / 3.0)
+
+def dpdf(x, u, s, distribuition):
+    import numpy as np
+    from numpy import pi, sqrt, log, exp, isnan
+    
+    
+    if distribuition == 'normal':
+        y = abs(1/(s**3*sqrt(2*pi))*(u-x)*np.exp(-0.5*((u-x)/s)**2))
+
+    elif distribuition == 'lognormal':
+        y = abs(-exp(-(u-log(x))**2/(2*s**2))*(s**2-u+log(x))/(s**3*x**2*sqrt(2*pi)))
+        y[isnan(y)] = 0
+     
+    return y
+
+def ddpdf(x, u, s, distribuition):
+    import numpy as np
+    from numpy import pi, sqrt, log, exp, isnan
+    
+    if distribuition == 'normal':
+        y = abs(-(s**2-u**2+2*u*x-x**2)/(s**5*sqrt(2*pi))*np.exp(-0.5*((u-x)/s)**2))
+
+    elif distribuition == 'lognormal':
+        y = abs(exp(-(log(x)-u)**2/(2*s**2))*(2*s**4-3*s**2*u+3*s**2*log(x)-s**2+u**2-2*u*log(x)+log(x)**2)/(s**5*x**3*sqrt(2*pi)))
+        y[isnan(y)] = 0
+    return y
