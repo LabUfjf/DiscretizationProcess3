@@ -135,6 +135,38 @@ def bin_fd(x):
     iqr = np.subtract(*np.percentile(x, [75, 25]))
     return 2.0 * iqr * x.size ** (-1.0 / 3.0)
 
+def pdf(x, u, s, distribuition):
+    import numpy as np
+    from numpy import pi, sqrt, log, exp, isnan
+    from scipy.stats import norm, lognorm
+    from scipy.interpolate import interp1d
+
+
+    if distribuition == 'normal':
+        #y = 1/(s*sqrt(2*pi))*exp(-0.5*((x-u)/s)**2)
+        y = norm.pdf(x, loc = u, scale = s)
+
+    elif distribuition == 'lognormal':
+        #y = 1/(x*s*sqrt(2*pi))*exp(-(log(x)-u)**2/(2*s**2))
+        #y[isnan(y)] = 0
+        y = lognorm.pdf(x, s, loc = 0, scale = np.exp(u))
+    return y
+
+def dpdf(x, u, s, distribuition):
+    import numpy as np
+    from numpy import pi, sqrt, log, exp, isnan
+    
+    
+    if distribuition == 'normal':
+        y = abs(1/(s**3*sqrt(2*pi))*(u-x)*np.exp(-0.5*((u-x)/s)**2))
+
+    elif distribuition == 'lognormal':
+        y = abs(-exp(-(u-log(x))**2/(2*s**2))*(s**2-u+log(x))/(s**3*x**2*sqrt(2*pi)))
+        y[isnan(y)] = 0
+     
+    return y
+
+
 def dpdf(x, u, s, distribuition):
     import numpy as np
     from numpy import pi, sqrt, log, exp, isnan
