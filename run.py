@@ -42,7 +42,12 @@ if __name__ == '__main__':
     analitica = False
     #####################################
     
-    
+    probROIord = {}
+    areaROIord = {}
+    div = {}
+    area = []
+    n = []
+    truth = truth1 = sf.pdf
     kinds = ['Linspace', 'CDFm', 'PDFm', 'iPDF1', 'iPDF2']
     
     if data:
@@ -84,41 +89,39 @@ if __name__ == '__main__':
     fest = interp1d(xest,YY,kind = interpolator, bounds_error = False, fill_value = (YY[0],YY[-1]))
     
     yestGrid = []
-        ytruthGrid = []
-        ytruthGrid2 = []
-        divi = []
+    ytruthGrid = []
+    ytruthGrid2 = []
+    divi = []
         
-        for i in range(ROI):
-            yestGrid.append([fest(xgridROI[i])])
-            ytruthGrid.append([truth(xgridROI[i],mu,sigma,distribuition)])
-            ytruthGrid2.append([truth1(xgridROI[i],mu,sigma,distribuition)])
-            divi.append(len(np.intersect1d(np.where(xest >= min(xgridROI[i]))[0], np.where(xest < max(xgridROI[i]))[0])))
-
-        diff2 = np.concatenate(abs((np.array(yestGrid) - np.array(ytruthGrid))*dx))
-        #diff2[np.isnan(diff2)] = 0
-        areaROI = np.sum(diff2,1)
-        
-        divi = np.array(divi)   
-        divi[divi == 0] = 1
-        
-        try:
-            probROI = np.mean(np.sum(ytruthGrid2,1),1)
-        except:
-            probROI = np.mean(ytruthGrid2,1)
-        
-        
-        probROIord[kind] = np.sort(probROI)
-        index = np.argsort(probROI)
-        
-        areaROIord[kind] = areaROI[index]
+    for i in range(ROI):
+        yestGrid.append([fest(xgridROI[i])])
+        ytruthGrid.append([truth(xgridROI[i],mu,sigma,distribuition)])
+        ytruthGrid2.append([truth1(xgridROI[i],mu,sigma,distribuition)])
+        divi.append(len(np.intersect1d(np.where(xest >= min(xgridROI[i]))[0], np.where(xest < max(xgridROI[i]))[0])))
     
-        area = np.append(area,np.sum(areaROIord[kind]))
-        n = np.append(n,len(probROIord[kind]))
-        div[kind] = divi[index]
+    diff2 = np.concatenate(abs((np.array(yestGrid) - np.array(ytruthGrid))*dx))
+    #diff2[np.isnan(diff2)] = 0
+    areaROI = np.sum(diff2,1)
+    
+    divi = np.array(divi)   
+    divi[divi == 0] = 1
+    
+    try:
+        probROI = np.mean(np.sum(ytruthGrid2,1),1)
+    except:
+        probROI = np.mean(ytruthGrid2,1)
     
     
+    probROIord[kind] = np.sort(probROI)
+    index = np.argsort(probROI)
     
-        return area,[probROIord,areaROIord]
+    areaROIord[kind] = areaROI[index]
+    
+    area = np.append(area,np.sum(areaROIord[kind]))
+    n = np.append(n,len(probROIord[kind]))
+    div[kind] = divi[index]
+    
+    retorno = area,[probROIord,areaROIord]
     
     
     
