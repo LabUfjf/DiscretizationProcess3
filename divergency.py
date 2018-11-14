@@ -19,10 +19,10 @@ def L1(P,Q):
 def KL(P,Q):
     import numpy as np
     
-    simi=(Q*np.log10((Q/P)));
+    simi=(P*np.log10((P/Q)));
     indN = np.where(np.isnan(simi) == False)
     indF = np.where(np.isinf(simi) == False)
     index = np.intersect1d(indN,indF)
-    simi= np.sum(simi[index])/np.size(P)
+    simi= np.abs(np.sum(simi[index])/np.size(P))
     
     return simi
