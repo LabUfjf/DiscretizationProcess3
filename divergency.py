@@ -7,13 +7,13 @@ Created on Wed Nov 14 12:37:41 2018
 
 def L2(P,Q):
     import numpy as np
-    simi = (np.sqrt(np.sum((P-Q)**2)))/np.size(P)
+    simi = (np.sqrt(np.sum((P-Q)**2)))#/np.size(P)
     return simi
 
 
 def L1(P,Q):
     import numpy as np
-    simi = (np.sum(np.abs(P-Q)))/np.size(P)
+    simi = (np.sum(np.abs(P-Q)))#/np.size(P)
     return simi
 
 def KL(P,Q):
@@ -23,6 +23,5 @@ def KL(P,Q):
     indN = np.where(np.isnan(simi) == False)
     indF = np.where(np.isinf(simi) == False)
     index = np.intersect1d(indN,indF)
-    simi= np.abs(np.sum(simi[index])/np.size(P))
-    
+    simi = np.abs(np.sum(simi[index]))#/np.size(P))
     return simi

@@ -39,7 +39,7 @@ if __name__ == '__main__':
     mu = 0
     sigma = 1
     
-    divergence = 'KL'       # L2 e KL
+    divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
     distribuition = 'lognormal'   # lognormal
     data = 0
