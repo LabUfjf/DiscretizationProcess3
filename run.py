@@ -25,22 +25,33 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     
-    ## Control Variables
+    ## FIXED Control Variables
     npts = np.concatenate([list(range(10,250,10)),list(range(250,550,50)),list(range(600,1100,100)),list(range(1500,5500,500))])
-    #npts = np.array([10,20])
-    outlier = 0
-    data = 0
     kinds = ['Linspace', 'CDFm', 'PDFm', 'iPDF1', 'iPDF2']
     ROI = 1
-    mu = 0
-    sigma = 1
-    weight = False
-    interpolator = 'linear'
-    distribuition = 'normal'
     seed=None
     ngrid = int(1e6)
-    analitica = True
+    weight = False
+    outlier = 0
+    #-------------------------------------------------------
+    
+    mu = 0
+    sigma = 1
+    
+    interpolator = 'linear'    # nearest
+    distribuition = 'normal'   # lognormal
+    data = 0
     #####################################
+    # Definition of the distribuition parameters
+    
+    
+    #####################################
+    
+    if data:
+        analitica = False
+    else:
+        analitica = True
+ 
     probROIord = {}
     areaROIord = {}
     
@@ -74,6 +85,7 @@ if __name__ == '__main__':
     dx = np.diff(xgrid)[0]
     
     for nest in npts:
+        print('#\nCalculating - Nº of estimation points = %d' %(nest))
         for kind in kinds:
             if kind == 'Linspace':
                 if not data:  
@@ -134,6 +146,7 @@ if __name__ == '__main__':
     plt.xlabel('Number of estimation points')
     plt.ylabel('Error')
     plt.legend()
+    plt.title('Analytical = %s - Distribuition = %s \n Interpolator = %s - Nº of Events = %d' %(str(analitica).upper(),distribuition.upper(),interpolator.upper(),data))
     
     
     
