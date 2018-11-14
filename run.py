@@ -11,6 +11,7 @@ import someFunctions as sf
 from scipy.interpolate import interp1d
 from scipy.stats import norm, lognorm
 import methodDisc as md
+import divergency as dv
 import matplotlib.pyplot as plt
 
 #import matplotlib.patches as mpatches
@@ -38,8 +39,9 @@ if __name__ == '__main__':
     mu = 0
     sigma = 1
     
+    divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
-    distribuition = 'normal'   # lognormal
+    distribuition = 'lognormal'   # lognormal
     data = 0
     #####################################
     # Definition of the distribuition parameters
@@ -102,39 +104,53 @@ if __name__ == '__main__':
     
             YY = sf.pdf(xest,mu, sigma,distribuition)
             fest = interp1d(xest,YY,kind = interpolator, bounds_error = False, fill_value = (YY[0],YY[-1]))
+
+
+            #### TESTE ####
             
-            yestGrid = []
-            ytruthGrid = []
-            ytruthGrid2 = []
-            divi = []
-                
-            for i in range(ROI):
-                yestGrid.append([fest(xgridROI[i])])
-                ytruthGrid.append([truth(xgridROI[i],mu,sigma,distribuition)])
-                ytruthGrid2.append([truth1(xgridROI[i],mu,sigma,distribuition)])
-                divi.append(len(np.intersect1d(np.where(xest >= min(xgridROI[i]))[0], np.where(xest < max(xgridROI[i]))[0])))
+            YN=fest(xgrid)   # Y calculado pelos metodos
             
-            diff2 = np.concatenate(abs((np.array(yestGrid) - np.array(ytruthGrid))*dx))
-            #diff2[np.isnan(diff2)] = 0
-            areaROI = np.sum(diff2,1)
+            YT=truth(xgrid,mu,sigma,distribuition) # Y calculado pelo TRUTH
             
-            divi = np.array(divi)   
-            divi[divi == 0] = 1
+            diver = getattr(dv,divergence)(YT,YN)
             
-            try:
-                probROI = np.mean(np.sum(ytruthGrid2,1),1)
-            except:
-                probROI = np.mean(ytruthGrid2,1)
+            areaROIord[kind]=np.append(areaROIord[kind],diver)
             
             
-            probROIord[kind] = np.append(probROIord[kind],np.sort(probROI))
-            index = np.argsort(probROI)
             
-            areaROIord[kind]=np.append(areaROIord[kind],areaROI[index])
-            
-            area = np.append(area,np.sum(areaROIord[kind]))
-            n = np.append(n,len(probROIord[kind]))
-            div[kind] = divi[index]
+#            ###################################################################
+#            yestGrid = []
+#            ytruthGrid = []
+#            ytruthGrid2 = []
+#            divi = []
+#                
+#            for i in range(ROI):
+#                yestGrid.append([fest(xgridROI[i])])
+#                ytruthGrid.append([truth(xgridROI[i],mu,sigma,distribuition)])
+#                ytruthGrid2.append([truth1(xgridROI[i],mu,sigma,distribuition)])
+#                divi.append(len(np.intersect1d(np.where(xest >= min(xgridROI[i]))[0], np.where(xest < max(xgridROI[i]))[0])))
+#            
+#            diff2 = np.concatenate(abs((np.array(yestGrid) - np.array(ytruthGrid))*dx))
+#            #diff2[np.isnan(diff2)] = 0
+#            areaROI = np.sum(diff2,1)
+#            
+#            divi = np.array(divi)   
+#            divi[divi == 0] = 1
+#            
+#            try:
+#                probROI = np.mean(np.sum(ytruthGrid2,1),1)
+#            except:
+#                probROI = np.mean(ytruthGrid2,1)
+#            
+#            
+#            probROIord[kind] = np.append(probROIord[kind],np.sort(probROI))
+#            index = np.argsort(probROI)
+#            
+#            areaROIord[kind]=np.append(areaROIord[kind],areaROI[index])
+#            
+#            area = np.append(area,np.sum(areaROIord[kind]))
+#            n = np.append(n,len(probROIord[kind]))
+#            div[kind] = divi[index]
             
             #retorno = area,[probROIord,areaROIord]
             
@@ -145,37 +161,7 @@ if __name__ == '__main__':
         plt.plot(npts,areaROIord[kind],'-o',label = kind, ms = 3)
     plt.yscale('log')
     plt.xlabel('Number of estimation points')
-    plt.ylabel('Error')
+    plt.ylabel('%s Divergence' %(divergence))
     plt.legend()
     plt.title('Analytical = %s - Distribuition = %s \n Interpolator = %s - Nº of Events = %d' %(str(analitica).upper(),distribuition.upper(),interpolator.upper(),data))
-    fig.savefig('./Figures/ERRORPLOT' + str(analitica).upper() + distribuition.upper() + interpolator.upper() + str(data) + '.png', bbox_inches='tight')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    fig.savefig('./Figures/ERRORPLOT_' + divergence + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(data) + '.png', bbox_inches='tight')

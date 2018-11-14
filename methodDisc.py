@@ -85,7 +85,7 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
             interp = interp1d(Y2,X2)
             y2 = np.flip(y1,0)
             x2 = interp(y2)
-        elif dist is 'lognorm':
+        elif dist is 'lognormal':
             inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
             inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
             inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
