@@ -48,7 +48,7 @@ if __name__ == '__main__':
     divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
     distribuition = 'lognormal'   # lognormal
-    data = int(100e3)
+    data = 0
     #####################################
     # Definition of the distribuition parameters
     
@@ -79,6 +79,7 @@ if __name__ == '__main__':
         inf,sup = min(d),max(d)
         
     else:
+        d=0
         if distribuition == 'normal':
               inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
             
@@ -105,7 +106,7 @@ if __name__ == '__main__':
                             xest = np.linspace(inf,sup,nest)
                 
             else:
-                xest = getattr(md,kind)(d,nest,distribuition,mu,sigma,analitica)
+                xest = getattr(md,kind)(data,nest,distribuition,mu,sigma,analitica)
     
     
             YY = sf.pdf(xest,mu, sigma,distribuition)
