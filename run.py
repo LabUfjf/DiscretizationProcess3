@@ -30,14 +30,16 @@ if __name__ == '__main__':
     npts = np.concatenate([list(range(10,250,10)),list(range(250,550,50)),list(range(600,1100,100)),list(range(1500,5500,500))])
     kinds = ['Linspace', 'CDFm', 'PDFm', 'iPDF1', 'iPDF2']
     ROI = 1
-    seed = None
+    seed = np.random.get_state() 
     ngrid = int(1e6)
     weight = False
     outlier = 0
+    curve = 3           # 1:5
     #-------------------------------------------------------
+    sig = [0.01,0.5,1,1.25,2]
     
     mu = 0
-    sigma = 1
+    sigma = sig[curve-1]
     
     divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
