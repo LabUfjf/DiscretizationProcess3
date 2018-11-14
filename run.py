@@ -140,6 +140,7 @@ if __name__ == '__main__':
             
             
             ####### PLOTS ######
+    fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
     for kind in kinds:
         plt.plot(npts,areaROIord[kind],'-o',label = kind, ms = 3)
     plt.yscale('log')
@@ -147,7 +148,7 @@ if __name__ == '__main__':
     plt.ylabel('Error')
     plt.legend()
     plt.title('Analytical = %s - Distribuition = %s \n Interpolator = %s - Nº of Events = %d' %(str(analitica).upper(),distribuition.upper(),interpolator.upper(),data))
-    
+    fig.savefig('./Figures/ERRORPLOT' + str(analitica).upper() + distribuition.upper() + interpolator.upper() + str(data) + '.png', bbox_inches='tight')
     
     
     
