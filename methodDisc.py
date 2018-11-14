@@ -32,9 +32,9 @@ def CDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
         x = interp(y)
     else:
         if dist is 'normal':
-            xest = norm.ppf(yest, loc = mu, scale = sigma)
+            x = norm.ppf(yest, loc = mu, scale = sigma)
         elif dist is 'lognormal':
-            xest = lognorm.ppf(yest, sigma, loc = 0, scale = np.exp(mu))
+            x = lognorm.ppf(yest, sigma, loc = 0, scale = np.exp(mu))
     
     return x
 
