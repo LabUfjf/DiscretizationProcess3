@@ -30,12 +30,16 @@ if __name__ == '__main__':
     npts = np.concatenate([list(range(10,250,10)),list(range(250,550,50)),list(range(600,1100,100)),list(range(1500,5500,500))])
     kinds = ['Linspace', 'CDFm', 'PDFm', 'iPDF1', 'iPDF2']
     ROI = 1
-    seed = np.random.get_state() 
+    seed = None
     ngrid = int(1e6)
     weight = False
     outlier = 0
     curve = 3           # 1:5
+    plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
+    plotNest = [10,100,500,1000,1500,3500]
     #-------------------------------------------------------
+    np.random.seed(seed)    #seed = np.random.get_state()  np.random.set_state(seed)
+    
     sig = [0.01,0.5,1,1.25,2]
     
     mu = 0
@@ -44,7 +48,7 @@ if __name__ == '__main__':
     divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
     distribuition = 'lognormal'   # lognormal
-    data = 0
+    data = int(100e3)
     #####################################
     # Definition of the distribuition parameters
     
@@ -101,7 +105,7 @@ if __name__ == '__main__':
                             xest = np.linspace(inf,sup,nest)
                 
             else:
-                xest = getattr(md,kind)(data,nest,distribuition,mu,sigma,analitica)
+                xest = getattr(md,kind)(d,nest,distribuition,mu,sigma,analitica)
     
     
             YY = sf.pdf(xest,mu, sigma,distribuition)
@@ -158,6 +162,18 @@ if __name__ == '__main__':
             
             
             ####### PLOTS ######
+            if any(num == nest for num in plotNest) and any(k in kind for k in plotKind):
+                title = kind + ' - ' + str(nest)
+                plt.figure(title,figsize=(8,6),dpi=100)
+                plt.plot(YN,lw=4,label='Estimated',alpha = 1)
+                plt.plot(YT,label='Truth')
+                plt.xlabel('Samples')
+                plt.ylabel('Probability')
+                plt.legend()
+                plt.title('Analytical = %s - Distribuition = %s - Discretizator = %s \n Interpolator = %s - Nº of Nest = %d - Nº of Events = %d' 
+                          %(analitica,distribuition.upper(),kind,interpolator.upper(),nest,data))
+                plt.savefig('./Figures/' + kind + '/MIDLEPLOT_' + kind + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(nest) + '_' + str(data) + '.png', bbox_inches='tight')
+                
     fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
     for kind in kinds:
         plt.plot(npts,areaROIord[kind],'-o',label = kind, ms = 3)
@@ -167,3 +183,19 @@ if __name__ == '__main__':
     plt.legend()
     plt.title('Analytical = %s - Distribuition = %s \n Interpolator = %s - Nº of Events = %d' %(str(analitica).upper(),distribuition.upper(),interpolator.upper(),data))
     fig.savefig('./Figures/ERRORPLOT_' + divergence + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(data) + '.png', bbox_inches='tight')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
