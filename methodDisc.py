@@ -13,32 +13,30 @@ In this file we have a few functions:
 """
 
 
-def CDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
+def CDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim = None):
     import numpy as np
     from scipy.interpolate import interp1d
     from statsmodels.distributions import ECDF
     from scipy.stats import norm, lognorm
     
     eps = 5e-5
-    yest = np.linspace(0+eps,1-eps,nPoint)
+    y = np.linspace(eps,1-eps,nPoint)
     
     if not analitica:    
         ecdf = ECDF(data)
-        inf,sup = min(data),max(data)
-        xest = np.linspace(inf,sup,int(100e3))
+        xest = np.linspace(lim[0],lim[1],int(100e3))
         yest = ecdf(xest)
         interp = interp1d(yest,xest,fill_value = 'extrapolate', kind = 'nearest')
-        y = np.linspace(eps,1-eps,nPoint)
         x = interp(y)
     else:
-        if dist is 'normal':
-            x = norm.ppf(yest, loc = mu, scale = sigma)
-        elif dist is 'lognormal':
-            x = lognorm.ppf(yest, sigma, loc = 0, scale = np.exp(mu))
+        if dist == 'normal':
+            x = norm.ppf(y, loc = mu, scale = sigma)
+        elif dist == 'lognormal':
+            x = lognorm.ppf(y, sigma, loc = 0, scale = np.exp(mu))
     
     return x
 
-def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
+def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim = None):
     import numpy as np
     from scipy.interpolate import interp1d
     from scipy.stats import norm, lognorm
@@ -70,10 +68,11 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
             y = np.linspace(yest[M],yest[m],nPoint)
             x = interp(y)
     else:
-        if dist is 'normal':
-            inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
+        inf,sup = lim[0],lim[1]
+        if dist == 'normal':
+            #inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
               
-      
+            
             X1 = np.linspace(inf,mu,int(1e6))
             Y1 = norm.pdf(X1, loc = mu, scale = sigma)
             interp = interp1d(Y1,X1)
@@ -85,10 +84,8 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
             interp = interp1d(Y2,X2)
             y2 = np.flip(y1,0)
             x2 = interp(y2)
-        elif dist is 'lognormal':
-            inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
+        elif dist == 'lognormal':
+           
             mode = np.exp(mu - sigma**2)
               
             X1 = np.linspace(inf,mode,int(1e6))
@@ -106,7 +103,7 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
     
     return x
 
-def iPDF1(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
+def iPDF1(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim=None):
     import numpy as np
     from scipy.interpolate import interp1d
     from methodDisc import mediaMovel
@@ -114,6 +111,7 @@ def iPDF1(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
     from someFunctions import ash, dpdf
     eps = 5e-5
     n = 5
+    inf,sup = lim
     if not analitica:       
     #x,y = ash(data,m=10,tip='linear',normed=True)
     #m = np.where(y == 0)
@@ -133,12 +131,14 @@ def iPDF1(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
     
     else:
         ngrid = int(1e6)
-        if dist is 'normal':
-            inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
-        elif dist is 'lognormal':
-            inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))  
+# =============================================================================
+#         if dist is 'normal':
+#             inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
+#         elif dist is 'lognormal':
+#             inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
+#             inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
+#             inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))  
+# =============================================================================
        
         x = np.linspace(inf,sup,ngrid)
         y = dpdf(x,mu,sigma,dist)
@@ -151,14 +151,14 @@ def iPDF1(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
     
     return X
 
-def iPDF2(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
+def iPDF2(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim=None):
     import numpy as np
     from scipy.interpolate import interp1d
     from someFunctions import ash, ddpdf
     from scipy.stats import norm, lognorm
     eps = 5e-5
     n = 5
-          
+    inf,sup = lim
 #    x,y = ash(data,m=10,tip='linear',normed=True)
 #    m = np.where(y == 0)
 #    y[m]=np.min(y)
@@ -178,13 +178,15 @@ def iPDF2(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False):
         X = interp(Y)
     else:
         ngrid = int(1e6)
-        if dist is 'normal':
-            inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
-        elif dist is 'lognormal':
-            inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
-            inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
-            
+# =============================================================================
+#         if dist is 'normal':
+#             inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
+#         elif dist is 'lognormal':
+#             inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
+#             inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
+#             inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
+#             
+# =============================================================================
         x = np.linspace(inf,sup,ngrid)
         y = ddpdf(x,mu,sigma,dist)
         cdf = np.cumsum(y)

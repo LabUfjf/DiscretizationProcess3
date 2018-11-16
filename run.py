@@ -30,7 +30,7 @@ if __name__ == '__main__':
     npts = np.concatenate([list(range(10,250,10)),list(range(250,550,50)),list(range(600,1100,100)),list(range(1500,5500,500))])
     kinds = ['Linspace', 'CDFm', 'PDFm', 'iPDF1', 'iPDF2']
     ROI = 1
-    seed = None
+    seed = 10
     ngrid = int(1e6)
     weight = False
     outlier = 0
@@ -38,6 +38,7 @@ if __name__ == '__main__':
     #plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
     plotKind = 'PDFm'.split()
     plotNest = [10,50,200,500,1500]
+    analitica = True
     #-------------------------------------------------------
     np.random.seed(seed)    #seed = np.random.get_state()  np.random.set_state(seed)
     
@@ -48,19 +49,15 @@ if __name__ == '__main__':
     
     divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
-    distribuition = 'normal'   # lognormal
+    dist = 2   # 1: normal, 2 : lognormal
     data = int(100e3)
+    distribuition = 'normal lognormal'.split()[dist-1]
     #####################################
     # Definition of the distribuition parameters
     
     
     #####################################
     
-    if data:
-        analitica = False
-    else:
-        analitica = True
- 
     probROIord = {}
     areaROIord = {}
     
@@ -72,22 +69,29 @@ if __name__ == '__main__':
     n = []
     truth = truth1 = sf.pdf
     
-    if data:
-        if distribuition == 'normal':
-                d = np.random.normal(mu,sigma,data)
-        elif distribuition == 'lognormal':
-                d = np.random.lognormal(mu, sigma, data)
-        inf,sup = min(d),max(d)
+# =============================================================================
+#     if data:
+#         if distribuition == 'normal':
+#                 d = np.random.normal(mu,sigma,data)
+#         elif distribuition == 'lognormal':
+#                 d = np.random.lognormal(mu, sigma, data)
+#         
+# =============================================================================
+    d = getattr(np.random,distribuition)(mu,sigma,data)
+    lim = inf,sup = min(d),max(d)
         
-    else:
-        d=0
-        if distribuition == 'normal':
-              inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
-            
-        elif distribuition == 'lognormal':
-              inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
-              inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
-              inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
+        
+# =============================================================================
+#     else:
+#         d=0
+#         if distribuition == 'normal':
+#               inf, sup = norm.interval(0.9999, loc = mu, scale = sigma)
+#             
+#         elif distribuition == 'lognormal':
+#               inf, sup = lognorm.interval(0.9999, sigma, loc = 0, scale = np.exp(mu))
+#               inf = lognorm.pdf(sup, sigma, loc = 0, scale = np.exp(mu))
+#               inf = lognorm.ppf(inf, sigma, loc = 0, scale = np.exp(mu))
+# =============================================================================
               
     xgrid = np.linspace(inf,sup,ngrid)
     xgridROI = xgrid.reshape([ROI,ngrid//ROI])
@@ -107,7 +111,7 @@ if __name__ == '__main__':
                             xest = np.linspace(inf,sup,nest)
                 
             else:
-                xest = getattr(md,kind)(d,nest,distribuition,mu,sigma,analitica)
+                xest = getattr(md,kind)(d,nest,distribuition,mu,sigma,analitica,lim)
     
     
             YY = sf.pdf(xest,mu, sigma,distribuition)
@@ -177,7 +181,7 @@ if __name__ == '__main__':
                           %(analitica,distribuition.upper(),kind,interpolator.upper(),nest,data))
                 plt.savefig('./Figures/' + kind + '/MIDLEPLOT_' + kind + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(nest) + '_' + str(data) + '.png', bbox_inches='tight')
                 
-    fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
+   # fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
     for kind in kinds:
         plt.plot(npts,areaROIord[kind],'-o',label = kind, ms = 3)
     plt.yscale('log')
