@@ -166,8 +166,9 @@ if __name__ == '__main__':
             if any(num == nest for num in plotNest) and any(k in kind for k in plotKind):
                 title = kind + ' - ' + str(nest)
                 plt.figure(title,figsize=(8,6),dpi=100)
-                plt.plot(YN,lw=4,label='Estimated',alpha = 1)
-                plt.plot(YT,label='Truth')
+                plt.plot(xest,YY,'o',lw=4,label='Estimated',alpha = 0.5)
+                plt.plot(xgrid,YN,lw=4,label='Interpolated',alpha = 1)
+                plt.plot(xgrid,YT,label='Truth')
                 plt.xlabel('Samples')
                 plt.ylabel('Probability')
                 plt.legend()
