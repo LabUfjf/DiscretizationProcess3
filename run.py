@@ -35,8 +35,9 @@ if __name__ == '__main__':
     weight = False
     outlier = 0
     curve = 3           # 1:5
-    plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
-    plotNest = [10,100,500,1000,1500,3500]
+    #plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
+    plotKind = 'PDFm'.split()
+    plotNest = [10,50,200,500,1500]
     #-------------------------------------------------------
     np.random.seed(seed)    #seed = np.random.get_state()  np.random.set_state(seed)
     
@@ -47,8 +48,8 @@ if __name__ == '__main__':
     
     divergence = 'L1'       # L2 e KL
     interpolator = 'linear'    # nearest
-    distribuition = 'lognormal'   # lognormal
-    data = 0
+    distribuition = 'normal'   # lognormal
+    data = int(100e3)
     #####################################
     # Definition of the distribuition parameters
     
@@ -106,7 +107,7 @@ if __name__ == '__main__':
                             xest = np.linspace(inf,sup,nest)
                 
             else:
-                xest = getattr(md,kind)(data,nest,distribuition,mu,sigma,analitica)
+                xest = getattr(md,kind)(d,nest,distribuition,mu,sigma,analitica)
     
     
             YY = sf.pdf(xest,mu, sigma,distribuition)
@@ -169,7 +170,7 @@ if __name__ == '__main__':
                 plt.plot(xest,YY,'o',lw=4,label='Estimated',alpha = 0.5)
                 plt.plot(xgrid,YN,lw=4,label='Interpolated',alpha = 1)
                 plt.plot(xgrid,YT,label='Truth')
-                plt.xlabel('Samples')
+                plt.xlabel('x')
                 plt.ylabel('Probability')
                 plt.legend()
                 plt.title('Analytical = %s - Distribuition = %s - Discretizator = %s \n Interpolator = %s - Nº of Nest = %d - Nº of Events = %d' 
