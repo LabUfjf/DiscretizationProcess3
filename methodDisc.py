@@ -82,7 +82,8 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim = 
             X2 = np.linspace(mu,sup,int(1e6))
             Y2 = norm.pdf(X2, loc = mu, scale = sigma)
             interp = interp1d(Y2,X2)
-            y2 = np.flip(y1,0)
+            y2 = np.linspace(Y2[0],Y2[-1],nPoint//2+1)
+            #y2 = np.flip(y1,0)
             x2 = interp(y2)
         elif dist == 'lognormal':
            
@@ -97,7 +98,8 @@ def PDFm(data,nPoint,dist = 'normal', mu = 0, sigma = 1,analitica = False,lim = 
             X2 = np.linspace(mode,sup,int(1e6))
             Y2 = lognorm.pdf(X2, sigma, loc = 0, scale = np.exp(mu))
             interp = interp1d(Y2,X2)
-            y2 = np.flip(y1,0)
+            y2 = np.linspace(Y2[0],Y2[-1],nPoint//2+1)
+            #y2 = np.flip(y1,0)
             x2 = interp(y2)
         x = np.concatenate([x1[:-1],x2])
     

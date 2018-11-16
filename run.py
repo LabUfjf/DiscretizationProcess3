@@ -36,9 +36,9 @@ if __name__ == '__main__':
     outlier = 0
     curve = 3           # 1:5
     #plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
-    plotKind = 'PDFm'.split()
+    plotKind = 'Linspace PDFm'.split()
     plotNest = [10,50,200,500,1500]
-    analitica = True
+    analitica = True #True
     #-------------------------------------------------------
     np.random.seed(seed)    #seed = np.random.get_state()  np.random.set_state(seed)
     
@@ -181,7 +181,7 @@ if __name__ == '__main__':
                           %(analitica,distribuition.upper(),kind,interpolator.upper(),nest,data))
                 plt.savefig('./Figures/' + kind + '/MIDLEPLOT_' + kind + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(nest) + '_' + str(data) + '.png', bbox_inches='tight')
                 
-   # fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
+    fig, ax1 = plt.subplots(figsize=(8,6),dpi=100)
     for kind in kinds:
         plt.plot(npts,areaROIord[kind],'-o',label = kind, ms = 3)
     plt.yscale('log')
