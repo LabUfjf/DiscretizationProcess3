@@ -38,7 +38,7 @@ if __name__ == '__main__':
     #plotKind = 'Linspace CDFm PDFm iPDF1 iPDF2'.split()
     plotKind = 'Linspace PDFm'.split()
     plotNest = [10,50,200,500,1500]
-    analitica = True #True
+    analitica = False #True
     #-------------------------------------------------------
     np.random.seed(seed)    #seed = np.random.get_state()  np.random.set_state(seed)
     
@@ -176,6 +176,7 @@ if __name__ == '__main__':
                 plt.plot(xgrid,YT,label='Truth')
                 plt.xlabel('x')
                 plt.ylabel('Probability')
+                plt.grid()
                 plt.legend()
                 plt.title('Analytical = %s - Distribuition = %s - Discretizator = %s \n Interpolator = %s - Nº of Nest = %d - Nº of Events = %d' 
                           %(analitica,distribuition.upper(),kind,interpolator.upper(),nest,data))
@@ -188,6 +189,7 @@ if __name__ == '__main__':
     plt.xlabel('Number of estimation points')
     plt.ylabel('%s Divergence' %(divergence))
     plt.legend()
+    plt.grid()
     plt.title('Analytical = %s - Distribuition = %s \n Interpolator = %s - Nº of Events = %d' %(str(analitica).upper(),distribuition.upper(),interpolator.upper(),data))
     fig.savefig('./Figures/ERRORPLOT_' + divergence + '_' + str(analitica).upper() + '_' + distribuition.upper() + '_' + interpolator.upper() + '_' + str(data) + '.png', bbox_inches='tight')
     
